@@ -2,6 +2,7 @@ package org.insat.helpDesk.Controller;
 
 import org.insat.helpDesk.Repository.TicketRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/tickets")
+@RequestMapping("/api/tickets")
 public class TicketController {
     @Autowired
     private TicketRepository ticketRepository;
@@ -33,6 +34,7 @@ public class TicketController {
         ticket.setUser(user);  
         return ticket;                
     }
+
     @PutMapping("{id}")
     public Ticket updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
         Ticket ticketToUpdate = ticketRepository.findById(id)
@@ -42,7 +44,13 @@ public class TicketController {
         ticketToUpdate.setPriority(ticket.getPriority());
         ticketToUpdate.setStatus(ticket.getStatus());
         ticketToUpdate.setDate(ticket.getDate());
+        ticketToUpdate.setModif(ticket.getModif());
         return ticketRepository.save(ticketToUpdate);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public void deleteTicket(@PathVariable Long id) {
+        ticketRepository.deleteById(id);
     }
 
 }

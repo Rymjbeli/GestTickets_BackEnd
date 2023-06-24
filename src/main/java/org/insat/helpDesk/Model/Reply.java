@@ -28,7 +28,7 @@ public class Reply implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long  id;
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -40,7 +40,7 @@ public class Reply implements java.io.Serializable {
 
     @ManyToOne
     @JoinColumn(name = "ticket_id")
-    @JsonIgnore
+    @JsonIgnoreProperties({ "user", "replies" })
     private Ticket ticket;
 
 }

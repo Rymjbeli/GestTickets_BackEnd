@@ -1,6 +1,7 @@
 package org.insat.helpDesk.Model;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.insat.helpDesk.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -25,16 +26,16 @@ public class User implements java.io.Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "firstname")
+    @Column(name = "firstname", nullable = false)
     private String firstname;
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
-    @Column(name = "role")
-    private String role;
+    @Column(name = "role", nullable = false)
+    private UserRole role;
     @Column(name = "age")
     private int age;
     @Column(name = "path")
@@ -43,7 +44,7 @@ public class User implements java.io.Serializable{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ticket> tickets;
 
-    @JsonIgnoreProperties({ "user" })
+    @JsonIgnoreProperties({ "user", "ticket" })
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reply> replies;   
 }

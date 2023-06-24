@@ -32,15 +32,18 @@ public class Ticket implements java.io.Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
     @Column(name = "status")
     private String status;
     @Column(name = "date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
+    @Column(name = "modif")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modif;
     @Column(name = "priority")
     private String priority;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -49,6 +52,6 @@ public class Ticket implements java.io.Serializable {
     private User user;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @JsonIgnoreProperties({ "user","ticket"})
     private List<Reply> replies;
 }
