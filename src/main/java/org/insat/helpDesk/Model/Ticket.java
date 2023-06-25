@@ -43,6 +43,9 @@ public class Ticket implements java.io.Serializable {
     private Date date;
     @Column(name = "priority")
     private String priority;
+    @Column(name = "modif")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modif;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnoreProperties({ "tickets", "replies" })
