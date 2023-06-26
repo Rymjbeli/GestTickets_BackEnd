@@ -8,4 +8,5 @@ public class SignupDTO {
     private String firstname;
     private String email;
     private String password;
+    private String path;
 }

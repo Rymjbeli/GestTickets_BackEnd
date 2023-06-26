@@ -10,5 +10,4 @@ import org.springframework.stereotype.Repository;
 public interface ReplyRepository extends JpaRepository<Reply, Long>{
 
     List<Reply> findByTicketId(Long ticketId);
-    
 }

@@ -36,6 +36,7 @@ public class WebSecurityConfiguration {
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+    
 
     @Bean
     public PasswordEncoder passwordEncoder() {

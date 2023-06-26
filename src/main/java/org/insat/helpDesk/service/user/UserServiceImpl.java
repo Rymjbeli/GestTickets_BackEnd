@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
         user.setFirstname(signupDTO.getFirstname());
         user.setEmail(signupDTO.getEmail());
         user.setRole(UserRole.USER);
+        user.setPath(signupDTO.getPath());
         user.setPassword(new BCryptPasswordEncoder().encode(signupDTO.getPassword()));
         User createdUser = userRepository.save(user);
         UserDTO userDTO = new UserDTO();
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserService {
         userDTO.setFirstname(createdUser.getFirstname());
         userDTO.setEmail(createdUser.getEmail());
         userDTO.setRole(createdUser.getRole());
+        userDTO.setPath(createdUser.getPath());
         return userDTO;
     }
 
