@@ -1,19 +1,13 @@
 package org.insat.helpDesk.Controller;
 
 import org.insat.helpDesk.Repository.TicketRepository;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.insat.helpDesk.Repository.UserRepository;
+import org.springframework.web.bind.annotation.*;
 import org.insat.helpDesk.Model.User;
 import org.insat.helpDesk.Exception.ResourceNotFoundException;
 import org.insat.helpDesk.Model.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -22,9 +16,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class TicketController {
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping("all")
     public List<Ticket> getAllTickets() {
         return ticketRepository.findAll();  
+    }
+
+    @GetMapping("all/{id}")
+    public List<Ticket> getAllTicketsByUserId(@PathVariable Long id) {
+        return ticketRepository.findByUserId(id);  
     }
     @GetMapping("{id}")
     public Ticket getTicketById(@PathVariable Long id) {
@@ -34,6 +36,13 @@ public class TicketController {
         ticket.setUser(user);  
         return ticket;                
     }
+
+    @PostMapping("all")
+    public Ticket addTicket(@RequestBody Ticket ticket) {
+        return ticketRepository.save(ticket);
+    }
+
+
 
     @PutMapping("{id}")
     public Ticket updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
@@ -52,5 +61,6 @@ public class TicketController {
     public void deleteTicket(@PathVariable Long id) {
         ticketRepository.deleteById(id);
     }
+
 
 }

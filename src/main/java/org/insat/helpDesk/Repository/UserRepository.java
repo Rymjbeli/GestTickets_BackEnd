@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import org.insat.helpDesk.Model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
+    User getUserById(Long id);
+    
     User findFirstByEmail(String email);
 
 }

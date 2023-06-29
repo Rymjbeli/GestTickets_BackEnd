@@ -1,5 +1,8 @@
 package org.insat.helpDesk.Controller;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.insat.helpDesk.dto.SignupDTO;
 import org.insat.helpDesk.dto.UserDTO;
 import org.insat.helpDesk.service.user.UserService;
@@ -9,7 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class SignupController {
@@ -17,7 +26,7 @@ public class SignupController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/sign-up")
+@PostMapping("/sign-up")
     public ResponseEntity<?> signupUser(@RequestBody SignupDTO signupDTO) {
 
         if(userService.hasUserWithEmail(signupDTO.getEmail())){
