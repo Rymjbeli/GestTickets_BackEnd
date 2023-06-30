@@ -2,9 +2,10 @@ package org.insat.helpDesk.service.user;
 
 import org.insat.helpDesk.dto.SignupDTO;
 import org.insat.helpDesk.dto.UserDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
-    UserDTO createUser(SignupDTO signupDTO);
+    UserDTO createUser(SignupDTO signupDTO, MultipartFile file);
 
     boolean hasUserWithEmail(String email);   
 }
