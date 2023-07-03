@@ -32,4 +32,15 @@ public class UserController {
         return user;        
     
     }
+    @GetMapping("isVerified/{id}")
+    public Boolean isVerified(@PathVariable Long id)
+    {
+        User user = userRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Fail! -> Cause: User with id " + id + " not found."));       
+        return user.isActive();          
+    }
+
+    
+
+
 }

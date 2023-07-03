@@ -1,7 +1,10 @@
 package org.insat.helpDesk.Model;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.insat.helpDesk.enums.UserRole;
+import org.springframework.cglib.core.Local;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
@@ -40,6 +43,9 @@ public class User implements java.io.Serializable{
     private int age;
     @Column(name = "path")
     private String path;
+    private boolean active;
+    private String otp;
+    private LocalDateTime otpGeneratedTime;
     @JsonIgnoreProperties({ "user", "replies" })
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ticket> tickets;

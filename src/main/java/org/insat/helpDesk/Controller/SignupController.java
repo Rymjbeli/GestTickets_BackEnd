@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.insat.helpDesk.dto.SignupDTO;
 import org.insat.helpDesk.dto.UserDTO;
+import org.insat.helpDesk.dto.VerificationDTO;
 import org.insat.helpDesk.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,5 +41,19 @@ public class SignupController {
     }
     
     return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
-  }  
+  } 
+  
+  @PutMapping("/verify-account")
+  public ResponseEntity<?> verifyAccount(@RequestBody VerificationDTO verificationDTO) {
+    boolean isVerified = userService.verifyAccount(verificationDTO.getEmail(), verificationDTO.getOtp());
+    if(isVerified) {
+    return ResponseEntity.ok().body("{\"message\": \"OTP verified. You can login.\"}");
+    } else {
+    return ResponseEntity.badRequest().body("{\"message\": \"Please regenerate OTP and try again.\"}");
+    }
+  }
+  @PutMapping("/regenerate-otp")
+  public ResponseEntity<String> regenerateOtp(@RequestBody String email) {
+    return new ResponseEntity<>(userService.regenerateOtp(email), HttpStatus.OK);
+  }
 }

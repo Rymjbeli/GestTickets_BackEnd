@@ -7,5 +7,9 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UserService {
     UserDTO createUser(SignupDTO signupDTO, MultipartFile file);
 
-    boolean hasUserWithEmail(String email);   
+    boolean hasUserWithEmail(String email);
+    
+    public boolean verifyAccount(String email, String otp);
+
+    public String regenerateOtp(String email);
 }

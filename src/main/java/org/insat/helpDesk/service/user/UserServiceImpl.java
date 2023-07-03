@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.insat.helpDesk.Model.User;
@@ -11,15 +13,22 @@ import org.insat.helpDesk.Repository.UserRepository;
 import org.insat.helpDesk.dto.SignupDTO;
 import org.insat.helpDesk.dto.UserDTO;
 import org.insat.helpDesk.enums.UserRole;
+import org.insat.helpDesk.utils.EmailUtil;
+import org.insat.helpDesk.utils.OtpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.mail.MessagingException;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private OtpUtils otpUtils;
+    @Autowired
+    private EmailUtil emailUtil;
 
     @Override
     public UserDTO createUser(SignupDTO signupDTO, MultipartFile file) {
@@ -45,6 +54,7 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+        String otp = otpUtils.generateOtp();
 
         User user = new User();
         user.setName(signupDTO.getName());
@@ -53,6 +63,8 @@ public class UserServiceImpl implements UserService {
         user.setRole(UserRole.USER);
         user.setPath(uniqueFilename);
         user.setPassword(new BCryptPasswordEncoder().encode(signupDTO.getPassword()));
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
         User createdUser = userRepository.save(user);
         UserDTO userDTO = new UserDTO();
         userDTO.setId(createdUser.getId());
@@ -61,8 +73,40 @@ public class UserServiceImpl implements UserService {
         userDTO.setEmail(createdUser.getEmail());
         userDTO.setRole(createdUser.getRole());
         userDTO.setPath(createdUser.getPath());
+        userDTO.setOtp(createdUser.getOtp());
+        userDTO.setOtpGeneratedTime(createdUser.getOtpGeneratedTime());
+        try {
+            emailUtil.sendOtpEmail(signupDTO.getEmail(), otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send otp please try again later");
+        }
         return userDTO;
     }
+
+    public boolean verifyAccount(String email, String otp) {
+        User user = userRepository.findFirstByEmail(email);
+        if (user.getOtp().equals(otp) && Duration.between(user.getOtpGeneratedTime(),
+        LocalDateTime.now()).getSeconds() < (1 * 60)) {
+            user.setActive(true);  
+            userRepository.save(user);
+            return true ;
+        }
+    return false ;
+    }
+    public String regenerateOtp(String email) {
+        User user = userRepository.findFirstByEmail(email);
+        String otp = otpUtils.generateOtp();
+        try {
+            emailUtil.sendOtpEmail(email, otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send otp please try again");
+        }
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
+        userRepository.save(user);
+        return "Email sent... please verify account within 1 minute";
+    }
+
 
     @Override
     public boolean hasUserWithEmail(String email) {
