@@ -12,4 +12,8 @@ public interface UserService {
     public boolean verifyAccount(String email, String otp);
 
     public String regenerateOtp(String email);
+
+    public String forgotPassword(String email);
+
+    public Boolean resetPassword(String email, String newPassword, String otp);
 }

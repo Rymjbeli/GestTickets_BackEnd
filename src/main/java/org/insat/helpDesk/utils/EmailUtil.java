@@ -25,9 +25,30 @@ public class EmailUtil {
             <a href="http://localhost:4200/verify-account?email=%s&otp=%s" target="_blank" 
             style="background-color: black; color: white; border-radius: 10px; padding: 10px; text-decoration: none;">
             Click link to verify</a>
-            <h4>The link is valid for 1 minute.</h4>
+            <h4>The link is valid for 24 hours.</h4>
             </div>
             """.formatted(email, otp), true)
+;
+
+        javaMailSender.send(mimeMessage);
+    }
+
+    
+    public void sendSetPasswordEmail(String email, String otp) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setTo(email);
+        mimeMessageHelper.setSubject("Reset Password");
+        mimeMessageHelper.setText("""
+            <div style="color: black">
+                <h1>Forgot your password?</h1>
+                <h4>Click the link below to reset your password.</h4> <br>
+            <a href="http://localhost:4200/reset-password?email=%s&otp=%s" target="_blank" 
+            style="background-color: black; color: white; border-radius: 10px; padding: 10px; text-decoration: none;">
+            Reset password</a>
+            <h4>The link is valid for 24 hours.</h4>
+            </div>
+            """.formatted(email,otp), true)
 ;
 
         javaMailSender.send(mimeMessage);

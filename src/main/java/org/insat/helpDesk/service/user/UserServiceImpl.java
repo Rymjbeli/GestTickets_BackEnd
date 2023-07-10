@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import jakarta.mail.MessagingException;
 @Service
 public class UserServiceImpl implements UserService {
@@ -86,7 +85,7 @@ public class UserServiceImpl implements UserService {
     public boolean verifyAccount(String email, String otp) {
         User user = userRepository.findFirstByEmail(email);
         if (user.getOtp().equals(otp) && Duration.between(user.getOtpGeneratedTime(),
-        LocalDateTime.now()).getSeconds() < (1 * 60)) {
+        LocalDateTime.now()).getSeconds() < (1 * 60 * 60 * 24)) {
             user.setActive(true);  
             userRepository.save(user);
             return true ;
@@ -119,5 +118,33 @@ public class UserServiceImpl implements UserService {
     return timestamp + "_" + uniqueId;
 }
 
+    public String forgotPassword(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No user found with email " + email));
+        String otp = otpUtils.generateOtp();
+        try {
+            emailUtil.sendSetPasswordEmail(email, otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send reset password email please try again");
+        }
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
+        userRepository.save(user);
+        return "Email sent... please verify account within 1 minute";
+
+    }
+
+    public Boolean resetPassword(String email, String password, String otp){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No user found with email " + email));
+        if (!user.getOtp().equals(otp) || Duration.between(user.getOtpGeneratedTime(),
+                LocalDateTime.now()).getSeconds() < (1 * 60 * 60 * 24)) {
+            user.setPassword(new BCryptPasswordEncoder().encode(password));
+            userRepository.save(user);
+            return true;
+            }
+        return false;
+
+    }
 
 }
