@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
         user.setOtp(otp);
         user.setOtpGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
-        return "Email sent... please verify account within 1 minute";
+        return "Email sent... please verify account within 24 hours";
     }
 
 
@@ -130,7 +130,7 @@ public class UserServiceImpl implements UserService {
         user.setOtp(otp);
         user.setOtpGeneratedTime(LocalDateTime.now());
         userRepository.save(user);
-        return "Email sent... please verify account within 1 minute";
+        return "Email sent... please verify account within 24 hours";
 
     }
 
